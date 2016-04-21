@@ -340,10 +340,10 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 inoremap jk <Esc>
 
 " Add comma or semicolon at the end of line or expresion
-nmap <leader>, m`A,<Esc>``
-nmap <leader>; m`A;<Esc>``
-imap <leader>, <Esc>m`A,<Esc>``a
-imap <leader>; <Esc>m`A;<Esc>``a
+nmap <silent> <leader>, :call ToggleLineEnding(',')<CR>
+nmap <silent> <leader>; :call ToggleLineEnding(';')<CR>
+imap <silent> <leader>, <Esc>:call ToggleLineEnding(',')<CR>i
+imap <silent> <leader>; <Esc>:call ToggleLineEnding(';')<CR>i
 
 " Auto close an html tag
 imap </ </<C-X><C-O>
@@ -658,4 +658,16 @@ function! <SID>BufcloseCloseIt()
    if buflisted(l:currentBufNum)
      execute("bdelete! ".l:currentBufNum)
    endif
+endfunction
+
+function! ToggleLineEnding(char)
+  let l:line = getline('.')
+
+  if (strpart(l:line, strlen(l:line) - 1) == a:char)
+    let l:toggledLine = substitute(l:line, a:char . '$', '', '')
+  else
+    let l:toggledLine = l:line . a:char
+  endif
+
+  call setline('.', l:toggledLine)
 endfunction
