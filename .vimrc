@@ -43,6 +43,9 @@ Plugin 'argtextobj.vim'
 Plugin 'kana/vim-textobj-user'
 Plugin 'kana/vim-textobj-entire'
 
+" Markdown
+Plugin 'shime/vim-livedown'
+
 " HTML
 Plugin 'mattn/emmet-vim'
 
@@ -541,6 +544,12 @@ xmap ga <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Markdown
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <C-m> :LivedownToggle<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
