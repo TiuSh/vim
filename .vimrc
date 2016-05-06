@@ -246,6 +246,9 @@ set listchars+=trail:·    " display trailing whitespaces with a dot
 set listchars+=extends:»  " right wrap
 set listchars+=precedes:« " left wrap
 
+" Remove trailing spaces on save
+autocmd BufWritePre * :%s/\s\+$//e
+
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -342,8 +345,8 @@ inoremap jk <Esc>
 " Add comma or semicolon at the end of line or expresion
 nmap <silent> <leader>, :call ToggleLineEnding(',')<CR>
 nmap <silent> <leader>; :call ToggleLineEnding(';')<CR>
-imap <silent> <leader>, <Esc>:call ToggleLineEnding(',')<CR>i
-imap <silent> <leader>; <Esc>:call ToggleLineEnding(';')<CR>i
+imap <silent> <leader>, <Esc>:call ToggleLineEnding(',')<CR>a
+imap <silent> <leader>; <Esc>:call ToggleLineEnding(';')<CR>a
 
 " Auto close an html tag
 imap </ </<C-X><C-O>
