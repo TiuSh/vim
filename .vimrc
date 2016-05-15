@@ -23,6 +23,8 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'bkad/CamelCaseMotion'
 Plugin 'tpope/vim-repeat'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'arecarn/crunch.vim'
+Plugin 'Shougo/vimproc.vim'
 
 " VCS (Git/SVN/...)
 Plugin 'tpope/vim-fugitive'
@@ -62,6 +64,12 @@ Plugin 'justinj/vim-react-snippets'
 
 " Meteor
 Plugin 'cmather/vim-meteor-snippets'
+
+" Haskell
+Plugin 'neovimhaskell/haskell-vim'
+Plugin 'eagletmt/ghcmod-vim'
+Plugin 'eagletmt/neco-ghc'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()
@@ -302,6 +310,15 @@ map <leader>tm :tabmove
 
 map <A-h> gT
 map <A-l> gt
+map <C-1> 1gt
+map <C-2> 2gt
+map <C-3> 3gt
+map <C-4> 4gt
+map <C-5> 5gt
+map <C-6> 6gt
+map <C-7> 7gt
+map <C-8> 8gt
+map <C-9> 9gt
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -552,7 +569,7 @@ nmap ga <Plug>(EasyAlign)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Markdown
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <C-m> :LivedownToggle<CR>
+" nmap <C-m> :LivedownToggle<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
