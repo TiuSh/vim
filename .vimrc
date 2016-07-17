@@ -25,6 +25,8 @@ Plugin 'tpope/vim-repeat'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'arecarn/crunch.vim'
 Plugin 'Shougo/vimproc.vim'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'svermeulen/vim-easyclip'
 
 " VCS (Git/SVN/...)
 Plugin 'tpope/vim-fugitive'
@@ -46,12 +48,14 @@ Plugin 'kana/vim-textobj-user'
 Plugin 'kana/vim-textobj-entire'
 
 " Markdown
+Plugin 'gabrielelana/vim-markdown'
 Plugin 'shime/vim-livedown'
 
 " HTML
 Plugin 'mattn/emmet-vim'
 
 " CSS
+Plugin 'hail2u/vim-css3-syntax'
 Plugin 'cakebaker/scss-syntax.vim'
 
 " Javascript
@@ -61,6 +65,9 @@ Plugin 'helino/vim-json'
 Plugin 'ternjs/tern_for_vim'
 Plugin 'mxw/vim-jsx'
 Plugin 'justinj/vim-react-snippets'
+
+" Typescript
+Plugin 'leafgarland/typescript-vim'
 
 " Meteor
 Plugin 'cmather/vim-meteor-snippets'
@@ -94,6 +101,11 @@ let g:mapleader = ","
 " Fast saving
 nmap <leader>w :w!<cr>
 
+" Open .vimrc file
+nmap <leader>v :tabedit $MYVIMRC<CR>
+
+" Use the system clipboard by default
+set clipboard=unnamed
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -132,7 +144,7 @@ set showcmd
 set noshowmode
 
 " Command line height
-set cmdheight=2
+set cmdheight=1
 
 " A buffer becomes hidden when it is abandoned
 set hid
@@ -297,7 +309,7 @@ map <leader>lp :lprevious<cr>
 map <leader>q :close<cr>
 
 " Close the current buffer
-map <leader>bd :Bclose<cr>
+map <leader>bc :Bclose<cr>
 
 " Close all the buffers
 map <leader>ba :%bdelete<cr>
@@ -366,7 +378,10 @@ imap <silent> <leader>, <Esc>:call ToggleLineEnding(',')<CR>a
 imap <silent> <leader>; <Esc>:call ToggleLineEnding(';')<CR>a
 
 " Auto close an html tag
-imap </ </<C-X><C-O>
+" imap </ </<C-X><C-O>
+
+" Consider .scss files as CSS
+autocmd BufNewFile,BufRead *.scss set ft=scss.css
 
 " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
@@ -502,6 +517,52 @@ function s:UpdateNERDTree(...)
   endif
 endfunction
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Easymotion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use <leader>. as a prefix for easymotion commands
+map <Leader>. <Plug>(easymotion-prefix)
+
+" Enable default mappings
+let g:EasyMotion_do_mapping = 1
+
+" Jump to anywhere you want with minimal keystrokes
+" `s{char}{char}{label}`
+nmap <Leader>.s <Plug>(easymotion-overwin-f2)
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <Leader>.j <Plug>(easymotion-j)
+map <Leader>.k <Plug>(easymotion-k)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => EasyClip
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" m mapping is now used by the 'cut' command
+" so we move the 'add mark' command
+nnoremap <leader>m m
+
+" Toggle auto formatting
+nmap <leader>cf <plug>EasyClipToggleFormattedPaste
+
+" Interactive pasting
+nmap <leader>p :IPaste<cr>
+nmap <leader>P :IPasteBefore<cr>
+
+" Insert mode pasting
+imap <c-v> <plug>EasyClipInsertModePaste
+
+" Auto format when pasting
+let g:EasyClipAutoFormat = 1
+
+" Save yanks to a shared file
+let g:EasyClipShareYanks = 1
+
+" Substitute operator (mapped to 's')
+let g:EasyClipUseSubstituteDefaults = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => YouCompleteMe
@@ -567,9 +628,15 @@ nmap ga <Plug>(EasyAlign)
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Markdown
+" => Livedown
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " nmap <C-m> :LivedownToggle<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM Markdown
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:markdown_mapping_switch_status='<Leader>ss'
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
