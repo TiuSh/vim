@@ -46,6 +46,7 @@ Plugin 'terryma/vim-expand-region'
 Plugin 'argtextobj.vim'
 Plugin 'kana/vim-textobj-user'
 Plugin 'kana/vim-textobj-entire'
+Plugin 'TiuSh/vim-toggline'
 
 " Markdown
 Plugin 'gabrielelana/vim-markdown'
@@ -67,10 +68,14 @@ Plugin 'mxw/vim-jsx'
 Plugin 'justinj/vim-react-snippets'
 
 " Typescript
-Plugin 'leafgarland/typescript-vim'
+Plugin 'HerringtonDarkholme/yats.vim'
+Plugin 'Quramy/tsuquyomi'
 
 " Meteor
 Plugin 'cmather/vim-meteor-snippets'
+
+" GraphQL
+Plugin 'jparise/vim-graphql'
 
 " Haskell
 Plugin 'neovimhaskell/haskell-vim'
@@ -99,10 +104,10 @@ let mapleader = ","
 let g:mapleader = ","
 
 " Fast saving
-nmap <leader>w :w!<cr>
+nmap <silent> <leader>w :w!<cr>
 
 " Open .vimrc file
-nmap <leader>v :tabedit $MYVIMRC<CR>
+nmap <silent> <leader>v :tabedit $MYVIMRC<cr>
 
 " Use the system clipboard by default
 set clipboard=unnamed
@@ -180,6 +185,7 @@ set magic
 
 " Show matching brackets when text indicator is over them
 set showmatch
+
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
@@ -200,11 +206,11 @@ set regexpengine=1
 syntax enable
 
 " Solarized scheme options
-let g:solarized_menu=0
-let g:solarized_contrast="high"
+let g:solarized_menu = 0
+let g:solarized_contrast = "high"
 
 " Uncomment if you don't use the Solarized palette in the terminal
-" let g:solarized_termcolors=256
+" let g:solarized_termcolors = 256
 
 " Color Scheme
 set background=dark
@@ -275,8 +281,8 @@ autocmd BufWritePre * :%s/\s\+$//e
 """"""""""""""""""""""""""""""
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
-vnoremap <silent> * :call VisualSelection('f')<CR>
-vnoremap <silent> # :call VisualSelection('b')<CR>
+vnoremap <silent> * :call VisualSelection('f')<cr>
+vnoremap <silent> # :call VisualSelection('b')<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -309,7 +315,7 @@ map <leader>lp :lprevious<cr>
 map <leader>q :close<cr>
 
 " Close the current buffer
-map <leader>bc :Bclose<cr>
+map <leader>bc :BD<cr>
 
 " Close all the buffers
 map <leader>ba :%bdelete<cr>
@@ -371,12 +377,6 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 " Remap <Esc> in insert mode to "jk"
 inoremap jk <Esc>
 
-" Add comma or semicolon at the end of line or expresion
-nmap <silent> <leader>, :call ToggleLineEnding(',')<CR>
-nmap <silent> <leader>; :call ToggleLineEnding(';')<CR>
-imap <silent> <leader>, <Esc>:call ToggleLineEnding(',')<CR>a
-imap <silent> <leader>; <Esc>:call ToggleLineEnding(';')<CR>a
-
 " Auto close an html tag
 " imap </ </<C-X><C-O>
 
@@ -396,15 +396,6 @@ if has("mac") || has("macunix")
   vmap <D-k> <M-k>
 endif
 
-" Delete trailing white space on save, useful for Python and CoffeeScript ;)
-func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => The Silver Searcher
@@ -414,18 +405,14 @@ if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  let g:ctrlp_user_command = 'ag %s -l --nocolor --nogroup --hidden -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
   let g:ctrlp_use_caching = 0
 endif
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => grep
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " grep word under cursor
-nnoremap <silent> gv :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+" nnoremap <silent> gv :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 
 " Define :Ag command
 command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
@@ -434,15 +421,15 @@ command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 nnoremap <leader>g :Ag<SPACE>
 
 " Open / Close Quickfix window
-map <leader>co :copen<CR>
-map <leader>cc :cclose<CR>
+map <leader>co :copen<cr>
+map <leader>cc :cclose<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => vimgrep searching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " When you press <leader>r you can search and replace the selected text
-vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
+vnoremap <silent> <leader>r :call VisualSelection('replace')<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -456,225 +443,6 @@ map <leader>sn ]s
 map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => NERDTree
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>n :NERDTreeToggle<cr>
-
-let NERDTreeIgnore=['\.pyc$', '\.pyo$', '\.rbc$', '\.rbo$', '\.class$', '\.o$', '\~$']
-let NERDTreeHijackNetrw = 0
-let NERDTreeShowHidden=1
-
-augroup AuNERDTreeCmd
-autocmd AuNERDTreeCmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
-autocmd AuNERDTreeCmd FocusGained * call s:UpdateNERDTree()
-
-" If the parameter is a directory, cd into it
-function s:CdIfDirectory(directory)
-  let explicitDirectory = isdirectory(a:directory)
-  let directory = explicitDirectory || empty(a:directory)
-
-  if explicitDirectory
-    exe "cd " . fnameescape(a:directory)
-  endif
-
-  " Allows reading from stdin
-  " ex: git diff | mvim -R -
-  if strlen(a:directory) == 0
-    return
-  endif
-
-  if directory
-    NERDTree
-    wincmd p
-    bd
-  endif
-
-  if explicitDirectory
-    wincmd p
-  endif
-endfunction
-
-" NERDTree utility function
-function s:UpdateNERDTree(...)
-  let stay = 0
-
-  if(exists("a:1"))
-    let stay = a:1
-  end
-
-  if exists("t:NERDTreeBufName")
-    let nr = bufwinnr(t:NERDTreeBufName)
-    if nr != -1
-      exe nr . "wincmd w"
-      exe substitute(mapcheck("R"), "<CR>", "", "")
-      if !stay
-        wincmd p
-      end
-    endif
-  endif
-endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Easymotion
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use <leader>. as a prefix for easymotion commands
-map <Leader>. <Plug>(easymotion-prefix)
-
-" Enable default mappings
-let g:EasyMotion_do_mapping = 1
-
-" Jump to anywhere you want with minimal keystrokes
-" `s{char}{char}{label}`
-nmap <Leader>.s <Plug>(easymotion-overwin-f2)
-
-" Turn on case insensitive feature
-let g:EasyMotion_smartcase = 1
-
-" JK motions: Line motions
-map <Leader>.j <Plug>(easymotion-j)
-map <Leader>.k <Plug>(easymotion-k)
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => EasyClip
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" m mapping is now used by the 'cut' command
-" so we move the 'add mark' command
-nnoremap <leader>m m
-
-" Toggle auto formatting
-nmap <leader>cf <plug>EasyClipToggleFormattedPaste
-
-" Interactive pasting
-nmap <leader>p :IPaste<cr>
-nmap <leader>P :IPasteBefore<cr>
-
-" Insert mode pasting
-imap <c-v> <plug>EasyClipInsertModePaste
-
-" Auto format when pasting
-let g:EasyClipAutoFormat = 1
-
-" Save yanks to a shared file
-let g:EasyClipShareYanks = 1
-
-" Substitute operator (mapped to 's')
-let g:EasyClipUseSubstituteDefaults = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => YouCompleteMe
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Emmet
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:user_emmet_mode='a'
-let g:user_emmet_leader_key='<C-z>'
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => CtrlP
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <C-b> :CtrlPBuffer<cr>
-map <C-t> :CtrlPBufTag<cr>
-
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn|meteor)$',
-  \ 'file': '\v\.(exe|so|dll)$',
-  \ 'link': 'some_bad_symbolic_links',
-  \ }
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => UltiSnips
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:UltiSnipsExpandTrigger="<leader>s"
-let g:UltiSnipsJumpForwardTrigger="<leader>n"
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Airline
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:airline#extensions#tabline#enabled=1
-let g:airline_powerline_fonts=1
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Easytags
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set tags=./.tags;
-set cpoptions+=d
-
-let g:easytags_cmd='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
-let g:easytags_opts=["--exclude=*.meteor/*"]
-" let g:easytags_autorecurse=1
-let g:easytags_dynamic_files=2
-let g:easytags_async=1
-let g:easytags_auto_highlight = 0
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => EasyAlign
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Livedown
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" nmap <C-m> :LivedownToggle<CR>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM Markdown
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:markdown_mapping_switch_status='<Leader>ss'
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Tern
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>td :TernDef<cr>
-map <leader>to :TernDoc<cr>
-map <leader>tr :TernRefs<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => CamelCaseMotion
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <silent> w <Plug>CamelCaseMotion_w
-map <silent> b <Plug>CamelCaseMotion_b
-map <silent> e <Plug>CamelCaseMotion_e
-map <silent> ge <Plug>CamelCaseMotion_ge
-sunmap w
-sunmap b
-sunmap e
-sunmap ge
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Syntastic
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=2
-let g:syntastic_check_on_open=0
-let g:syntastic_check_on_wq=0
-let g:syntastic_html_tidy_ignore_errors=['<template> proprietary attribute "name"']
-let g:syntastic_javascript_checkers=['eslint']
-
-map <leader>sc :SyntasticCheck<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -726,35 +494,262 @@ function! HasPaste()
     return ''
 endfunction
 
-" Don't close window, when deleting a buffer
-command! Bclose call <SID>BufcloseCloseIt()
-function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
 
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""" PLUGINS """""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NERDTree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <silent> <leader>n :NERDTreeToggle<cr>
 
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
-endfunction
+let NERDTreeIgnore = ['\.pyc$', '\.pyo$', '\.rbc$', '\.rbo$', '\.class$', '\.o$', '\~$']
+let NERDTreeHijackNetrw = 0
+let NERDTreeShowHidden = 1
 
-function! ToggleLineEnding(char)
-  let l:line = getline('.')
+augroup AuNERDTreeCmd
+autocmd AuNERDTreeCmd VimEnter * call s:CdIfDirectory(expand("<amatch>"))
+autocmd AuNERDTreeCmd FocusGained * call s:UpdateNERDTree()
 
-  if (strpart(l:line, strlen(l:line) - 1) == a:char)
-    let l:toggledLine = substitute(l:line, a:char . '$', '', '')
-  else
-    let l:toggledLine = l:line . a:char
+" If the parameter is a directory, cd into it
+function s:CdIfDirectory(directory)
+  let explicitDirectory = isdirectory(a:directory)
+  let directory = explicitDirectory || empty(a:directory)
+
+  if explicitDirectory
+    exe "cd " . fnameescape(a:directory)
   endif
 
-  call setline('.', l:toggledLine)
+  " Allows reading from stdin
+  " ex: git diff | mvim -R -
+  if strlen(a:directory) == 0
+    return
+  endif
+
+  if directory
+    NERDTree
+    wincmd p
+    bd
+  endif
+
+  if explicitDirectory
+    wincmd p
+  endif
 endfunction
+
+" NERDTree utility function
+function s:UpdateNERDTree(...)
+  let stay = 0
+
+  if(exists("a:1"))
+    let stay = a:1
+  end
+
+  if exists("t:NERDTreeBufName")
+    let nr = bufwinnr(t:NERDTreeBufName)
+    if nr != -1
+      exe nr . "wincmd w"
+      exe substitute(mapcheck("R"), "<cr>", "", "")
+      if !stay
+        wincmd p
+      end
+    endif
+  endif
+endfunction
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Airline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => CtrlP
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ctrlp_show_hidden = 1
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn|meteor)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
+map <C-b> :CtrlPBuffer<cr>
+map <C-t> :CtrlPBufTag<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => CamelCaseMotion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Easymotion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use <leader>. as a prefix for easymotion commands
+map <Leader>. <Plug>(easymotion-prefix)
+
+" Enable default mappings
+let g:EasyMotion_do_mapping = 1
+
+" Jump to anywhere you want with minimal keystrokes
+" `s{char}{char}{label}`
+nmap <Leader>.s <Plug>(easymotion-overwin-f2)
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <Leader>.j <Plug>(easymotion-j)
+map <Leader>.k <Plug>(easymotion-k)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => EasyClip
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" m mapping is now used by the 'cut' command
+" so we move the 'add mark' command
+nnoremap <leader>m m
+
+" Toggle auto formatting
+nmap <leader>cf <plug>EasyClipToggleFormattedPaste
+
+" Interactive pasting
+nmap <leader>p :IPaste<cr>
+nmap <leader>P :IPasteBefore<cr>
+
+" Insert mode pasting
+imap <c-v> <plug>EasyClipInsertModePaste
+
+" Auto format when pasting
+let g:EasyClipAutoFormat = 1
+
+" Save yanks to a shared file
+let g:EasyClipShareYanks = 1
+
+" Substitute operator (mapped to 's')
+let g:EasyClipUseSubstituteDefaults = 1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Syntastic
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_html_tidy_ignore_errors = ['<template> proprietary attribute "name"']
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_typescript_checkers = ['tsuquyomi']
+
+map <leader>sc :SyntasticCheck<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Easytags
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set tags=./.tags;
+set cpoptions+=d
+
+let g:easytags_cmd = '/usr/local/Cellar/ctags/5.8_1/bin/ctags'
+let g:easytags_opts = ["--exclude=*.meteor/*"]
+" let g:easytags_autorecurse = 1
+let g:easytags_dynamic_files = 2
+let g:easytags_async = 1
+let g:easytags_auto_highlight = 0
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => EasyAlign
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => YouCompleteMe
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if !exists("g:ycm_semantic_triggers")
+  let g:ycm_semantic_triggers = {}
+endif
+
+let g:ycm_semantic_triggers['typescript'] = ['.']
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => UltiSnips
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:UltiSnipsExpandTrigger = "<leader>s"
+let g:UltiSnipsJumpForwardTrigger = "<leader>n"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Toggline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Add comma or semicolon at the end of line or expresion
+nmap <silent> <leader>, :call Toggline#End(',')<cr>
+nmap <silent> <leader>; :call Toggline#End(';')<cr>
+imap <silent> <leader>, <Esc><Esc>:call Toggline#End(',')<cr>a
+imap <silent> <leader>; <Esc><Esc>:call Toggline#End(';')<cr>a
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM Markdown
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:markdown_mapping_switch_status = '<Leader>ss'
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Livedown
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <C-m> :LivedownToggle<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Emmet
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:user_emmet_mode = 'a'
+let g:user_emmet_leader_key = '<C-z>'
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Ternjs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>td :TernDef<cr>
+map <leader>to :TernDoc<cr>
+map <leader>tr :TernRefs<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tsuquyomi
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use Syntastic for syntax check
+let g:tsuquyomi_disable_quickfix = 1
+
+" Use single quotes instead of double quotes
+let g:tsuquyomi_single_quote_import = 1
+
+" Disable default mappings
+let g:tsuquyomi_disable_default_mappings = 1
+
+autocmd Filetype typescript nmap <buffer> <C-]> <Plug>(TsuquyomiDefinition)
+autocmd Filetype typescript nmap <buffer> <leader>i <Plug>(TsuquyomiImport)
+autocmd Filetype typescript nmap <buffer> <leader>rf <Plug>(TsuquyomiReferences)
+" autocmd Filetype typescript nmap <buffer> <C-t> <Plug>(TsuquyomiGoBack)
