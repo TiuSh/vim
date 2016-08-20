@@ -18,12 +18,14 @@ Plug 'bkad/CamelCaseMotion'
 Plug 'tpope/vim-repeat'
 Plug 'altercation/vim-colors-solarized'
 Plug 'arecarn/crunch.vim'
-Plug 'Shougo/vimproc.vim'
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'easymotion/vim-easymotion'
 Plug 'svermeulen/vim-easyclip'
+Plug 'kassio/neoterm'
 
 " VCS (Git/SVN/...)
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
 " All languages
 Plug 'scrooloose/syntastic'
@@ -647,6 +649,20 @@ let g:EasyClipUseSubstituteDefaults = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NeoTerm
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Execute a command in terminal
+nnoremap <leader>tt :T<space>
+" open terminal
+nnoremap <silent> <leader>tto :Topen<cr>
+" hide/close terminal
+nnoremap <silent> <leader>tth :call neoterm#close()<cr>
+" clear terminal
+nnoremap <silent> <leader>ttl :call neoterm#clear()<cr>
+" kills the current job (send a <c-c>)
+nnoremap <silent> <leader>ttc :call neoterm#kill()<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Syntastic
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set statusline+=%#warningmsg#
@@ -737,9 +753,9 @@ let g:user_emmet_leader_key = '<C-z>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Ternjs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>td :TernDef<cr>
-map <leader>to :TernDoc<cr>
-map <leader>tr :TernRefs<cr>
+" map <leader>td :TernDef<cr>
+" map <leader>to :TernDoc<cr>
+" map <leader>tr :TernRefs<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
