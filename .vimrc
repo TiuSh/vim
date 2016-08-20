@@ -1,90 +1,82 @@
 set nocompatible
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plugins (Vundle)
+" => Plugins (vim-plug)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype off
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+call plug#begin('~/.vim/plugged')
 
 " My plugins
 
 " IDE
-Plugin 'scrooloose/nerdtree'
-Plugin 'vim-scripts/bufkill.vim'
-Plugin 'bling/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'bkad/CamelCaseMotion'
-Plugin 'tpope/vim-repeat'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'arecarn/crunch.vim'
-Plugin 'Shougo/vimproc.vim'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'svermeulen/vim-easyclip'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-scripts/bufkill.vim'
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'bkad/CamelCaseMotion'
+Plug 'tpope/vim-repeat'
+Plug 'altercation/vim-colors-solarized'
+Plug 'arecarn/crunch.vim'
+Plug 'Shougo/vimproc.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'svermeulen/vim-easyclip'
 
 " VCS (Git/SVN/...)
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 
 " All languages
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-commentary'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
-Plugin 'junegunn/vim-easy-align'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'tpope/vim-surround'
-Plugin 'terryma/vim-expand-region'
-Plugin 'argtextobj.vim'
-Plugin 'kana/vim-textobj-user'
-Plugin 'kana/vim-textobj-entire'
-Plugin 'TiuSh/vim-toggline'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-commentary'
+Plug 'jiangmiao/auto-pairs'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
+Plug 'junegunn/vim-easy-align'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'tpope/vim-surround'
+Plug 'terryma/vim-expand-region'
+Plug 'argtextobj.vim'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-entire'
+Plug 'TiuSh/vim-toggline'
 
 " Markdown
-Plugin 'gabrielelana/vim-markdown'
-Plugin 'shime/vim-livedown'
+Plug 'gabrielelana/vim-markdown'
+Plug 'shime/vim-livedown'
 
 " HTML
-Plugin 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim'
 
 " CSS
-Plugin 'hail2u/vim-css3-syntax'
-Plugin 'cakebaker/scss-syntax.vim'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'cakebaker/scss-syntax.vim'
 
 " Javascript
-Plugin 'pmsorhaindo/syntastic-local-eslint.vim'
-Plugin 'pangloss/vim-javascript'
-Plugin 'helino/vim-json'
-Plugin 'ternjs/tern_for_vim'
-Plugin 'mxw/vim-jsx'
-Plugin 'justinj/vim-react-snippets'
+Plug 'pmsorhaindo/syntastic-local-eslint.vim'
+Plug 'pangloss/vim-javascript'
+Plug 'helino/vim-json'
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'mxw/vim-jsx'
+Plug 'justinj/vim-react-snippets'
 
 " Typescript
-Plugin 'HerringtonDarkholme/yats.vim'
-Plugin 'Quramy/tsuquyomi'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'Quramy/tsuquyomi'
 
 " Meteor
-Plugin 'cmather/vim-meteor-snippets'
+Plug 'cmather/vim-meteor-snippets'
 
 " GraphQL
-Plugin 'jparise/vim-graphql'
+Plug 'jparise/vim-graphql'
 
 " Haskell
-Plugin 'neovimhaskell/haskell-vim'
-Plugin 'eagletmt/ghcmod-vim'
-Plugin 'eagletmt/neco-ghc'
+Plug 'neovimhaskell/haskell-vim'
+Plug 'eagletmt/ghcmod-vim'
+Plug 'eagletmt/neco-ghc'
 
-
-" All of your Plugins must be added before the following line
-call vundle#end()
+call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -177,8 +169,10 @@ set lazyredraw
 set ttyfast
 
 " Enable mouse
-set mouse=a
-set ttymouse=sgr
+if !has('nvim')
+  set mouse=a
+  set ttymouse=sgr
+endif
 
 " For regular expressions turn magic on
 set magic
@@ -305,6 +299,13 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+if has('nvim')
+  tnoremap <C-j> <C-\><C-n><C-w>j
+  tnoremap <C-k> <C-\><C-n><C-w>k
+  tnoremap <C-h> <C-\><C-n><C-w>h
+  tnoremap <C-l> <C-\><C-n><C-w>l
+endif
+
 " Location list mapping
 map <leader>lo :lopen<cr>
 map <leader>lc :lclose<cr>
@@ -376,6 +377,10 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remap <Esc> in insert mode to "jk"
 inoremap jk <Esc>
+
+if has('nvim')
+  tnoremap jk <C-\><C-n>
+endif
 
 " Auto close an html tag
 " imap </ </<C-X><C-O>
@@ -704,10 +709,10 @@ let g:UltiSnipsJumpForwardTrigger = "<leader>n"
 " => Toggline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Add comma or semicolon at the end of line or expresion
-nmap <silent> <leader>, :call Toggline#End(',')<cr>
-nmap <silent> <leader>; :call Toggline#End(';')<cr>
-imap <silent> <leader>, <Esc><Esc>:call Toggline#End(',')<cr>a
-imap <silent> <leader>; <Esc><Esc>:call Toggline#End(';')<cr>a
+nmap <silent> <leader>, :call toggline#End(',')<cr>
+nmap <silent> <leader>; :call toggline#End(';')<cr>
+imap <silent> <leader>, <Esc><Esc>:call toggline#End(',')<cr>a
+imap <silent> <leader>; <Esc><Esc>:call toggline#End(';')<cr>a
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -719,7 +724,7 @@ let g:markdown_mapping_switch_status = '<Leader>ss'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Livedown
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <C-m> :LivedownToggle<cr>
+" nmap <C-m> :LivedownToggle<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -752,4 +757,4 @@ let g:tsuquyomi_disable_default_mappings = 1
 autocmd Filetype typescript nmap <buffer> <C-]> <Plug>(TsuquyomiDefinition)
 autocmd Filetype typescript nmap <buffer> <leader>i <Plug>(TsuquyomiImport)
 autocmd Filetype typescript nmap <buffer> <leader>rf <Plug>(TsuquyomiReferences)
-" autocmd Filetype typescript nmap <buffer> <C-t> <Plug>(TsuquyomiGoBack)
+autocmd Filetype typescript nmap <buffer> <C-t> <Plug>(TsuquyomiGoBack)

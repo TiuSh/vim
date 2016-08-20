@@ -22,30 +22,16 @@
 
 ```
 $ ln -s ~/.tiush-vim/.vimrc ~/.vimrc
-$ ln -s ~/.tiush-vim/.tern-config ~/.tern-config
+$ ln -s ~/.tiush-vim/.ctags ~/.ctags
 ```
 
-* Set up Vundle:
+* Set up vim-plug:
 
-`$ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim`
+`$ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim`
 
 * Install Plugins:
 
-`$ vim +PluginInstall +qall`
-
-* Set up YouCompleteMe:
-
-```
-$ cd ~/.vim/bundle/YouCompleteMe
-$ ./install.py
-```
-
-* Set up Tern:
-
-```
-$ cd ~/.vim/bundle/tern_for_vim
-$ npm install
-```
+`$ vim +PlugInstall +qall`
 
 * Set up [Solarized theme](http://ethanschoonover.com/solarized)
 
@@ -67,29 +53,15 @@ $ npm install
 
 ```
 $ ln -s ~/.tiush-vim/.vimrc ~/.vimrc
-$ ln -s ~/.tiush-vim/.tern-config ~/.tern-config
+$ ln -s ~/.tiush-vim/.ctags ~/.ctags
 ```
 
-* Set up Vundle:
+* Set up vim-plug:
 
-`$ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim`
+`$ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim`
 
 * Install Plugins:
 
-`$ vim +PluginInstall +qall`
-
-* Set up YouCompleteMe:
-
-```
-$ cd ~/.vim/bundle/YouCompleteMe
-$ ./install.py
-```
-
-* Set up Tern:
-
-```
-$ cd ~/.vim/bundle/tern_for_vim
-$ npm install
-```
+`$ vim +PlugInstall +qall`
 
 * Set up [Solarized theme](http://ethanschoonover.com/solarized)
