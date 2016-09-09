@@ -22,19 +22,20 @@ Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'easymotion/vim-easymotion'
 Plug 'svermeulen/vim-easyclip'
 Plug 'kassio/neoterm'
+Plug 'neovim/python-client'
 
 " VCS (Git/SVN/...)
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
 " All languages
-Plug 'scrooloose/syntastic'
+Plug 'neomake/neomake'
 Plug 'tpope/vim-commentary'
 Plug 'jiangmiao/auto-pairs'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-easytags'
 Plug 'junegunn/vim-easy-align'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
@@ -56,16 +57,21 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'cakebaker/scss-syntax.vim'
 
 " Javascript
-Plug 'pmsorhaindo/syntastic-local-eslint.vim'
+Plug 'jaawerth/neomake-local-eslint-first'
 Plug 'pangloss/vim-javascript'
 Plug 'helino/vim-json'
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+Plug 'ternjs/tern_for_vim', { 'do': 'npm install -g tern && npm install' }
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'mxw/vim-jsx'
 Plug 'justinj/vim-react-snippets'
 
 " Typescript
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'Quramy/tsuquyomi'
+Plug 'mhartington/deoplete-typescript'
+Plug 'mhartington/vim-angular2-snippets'
+
+" PHP
+Plug 'shawncplus/phpcomplete.vim'
 
 " Meteor
 Plug 'cmather/vim-meteor-snippets'
@@ -127,8 +133,9 @@ set wildignore+=.DS_Store                        " OSX
 set wildignore+=*.obj,*.rbc,*.class,*.gem        " Disable output and VCS files
 set wildignore+=*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz " Disable archive files
 
-" Show line numbers
+" Show relative line numbers
 set number
+set relativenumber
 
 " Show column number
 set ruler
@@ -301,6 +308,7 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+" Move between windows when in terminal mode
 if has('nvim')
   tnoremap <C-j> <C-\><C-n><C-w>j
   tnoremap <C-k> <C-\><C-n><C-w>k
@@ -380,12 +388,10 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 " Remap <Esc> in insert mode to "jk"
 inoremap jk <Esc>
 
+" Remap also in terminal mode
 if has('nvim')
   tnoremap jk <C-\><C-n>
 endif
-
-" Auto close an html tag
-" imap </ </<C-X><C-O>
 
 " Consider .scss files as CSS
 autocmd BufNewFile,BufRead *.scss set ft=scss.css
@@ -430,6 +436,12 @@ nnoremap <leader>g :Ag<SPACE>
 " Open / Close Quickfix window
 map <leader>co :copen<cr>
 map <leader>cc :cclose<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Omicomplete
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set omnifunc=csscomplete#CompleteCSS
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -576,6 +588,7 @@ let g:airline_powerline_fonts = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => CtrlP
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ctrlp_open_new_file = 'r'
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn|meteor)$',
@@ -655,6 +668,8 @@ let g:EasyClipUseSubstituteDefaults = 1
 nnoremap <leader>tt :T<space>
 " open terminal
 nnoremap <silent> <leader>tto :Topen<cr>
+" new terminal
+nnoremap <silent> <leader>ttn :Tnew<cr>
 " hide/close terminal
 nnoremap <silent> <leader>tth :call neoterm#close()<cr>
 " clear terminal
@@ -662,22 +677,33 @@ nnoremap <silent> <leader>ttl :call neoterm#clear()<cr>
 " kills the current job (send a <c-c>)
 nnoremap <silent> <leader>ttc :call neoterm#kill()<cr>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Syntastic
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 2
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-let g:syntastic_html_tidy_ignore_errors = ['<template> proprietary attribute "name"']
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_typescript_checkers = ['tsuquyomi']
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Neomake
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enabled makers
+let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_typescript_enabled_makers = ['tsc']
 
-map <leader>sc :SyntasticCheck<cr>
+" Typescript compiler
+function! neomake#makers#ft#typescript#tsc()
+  return {
+    \ 'args': ['--project', getcwd(), '--noEmit'],
+    \ 'append_file': 0,
+    \ 'errorformat':
+    \   '%E%f %#(%l\,%c): error %m,' .
+    \   '%E%f %#(%l\,%c): %m,' .
+    \   '%Eerror %m,' .
+    \   '%C%\s%\+%m'
+  \ }
+endfunction
+
+" Error sign colors
+hi NeomakeErrorMsg ctermfg=160 ctermbg=black
+let g:neomake_error_sign = {'text': '✖', 'texthl': 'NeomakeErrorMsg'}
+
+" Run Neomake on save
+autocmd! BufWritePost * Neomake
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -693,6 +719,16 @@ let g:easytags_dynamic_files = 2
 let g:easytags_async = 1
 let g:easytags_auto_highlight = 0
 
+let g:easytags_languages = {
+\  'typescript': {
+\    'cmd': g:easytags_cmd,
+\    'args': [],
+\    'fileoutput_opt': '-f',
+\    'stdout_opt': '-f-',
+\    'recurse_flag': '-R'
+\  }
+\}
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => EasyAlign
@@ -705,14 +741,29 @@ nmap ga <Plug>(EasyAlign)
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => YouCompleteMe
+" => Deoplete
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if !exists("g:ycm_semantic_triggers")
-  let g:ycm_semantic_triggers = {}
-endif
+" Enable on startup
+let g:deoplete#enable_at_startup = 1
 
-let g:ycm_semantic_triggers['typescript'] = ['.']
+" Disable completion max width
+let g:deoplete#max_abbr_width = 0
+let g:deoplete#max_menu_width = 0
 
+" File path relative to buffer
+let g:deoplete#file#enable_buffer_path = 1
+
+" Disable in comments/strings
+call deoplete#custom#set('_', 'disabled_syntaxes', ['Comment', 'String'])
+
+" Navigate with tab
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+
+" Autoclose preview window
+autocmd CompleteDone * pclose!
+
+" Debug
+ " call deoplete#enable_logging('DEBUG', 'deoplete.log')
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UltiSnips
@@ -753,24 +804,19 @@ let g:user_emmet_leader_key = '<C-z>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Ternjs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" map <leader>td :TernDef<cr>
-" map <leader>to :TernDoc<cr>
-" map <leader>tr :TernRefs<cr>
+map <leader>td :TernDef<cr>
+map <leader>to :TernDoc<cr>
+map <leader>tr :TernRefs<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Tsuquyomi
+" => deoplete-ternjs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use Syntastic for syntax check
-let g:tsuquyomi_disable_quickfix = 1
+" Use deoplete.
+let g:tern_request_timeout = 1
+" Disable full signature type on autocomplete
+" let g:tern_show_signature_in_pum = 0
 
-" Use single quotes instead of double quotes
-let g:tsuquyomi_single_quote_import = 1
-
-" Disable default mappings
-let g:tsuquyomi_disable_default_mappings = 1
-
-autocmd Filetype typescript nmap <buffer> <C-]> <Plug>(TsuquyomiDefinition)
-autocmd Filetype typescript nmap <buffer> <leader>i <Plug>(TsuquyomiImport)
-autocmd Filetype typescript nmap <buffer> <leader>rf <Plug>(TsuquyomiReferences)
-autocmd Filetype typescript nmap <buffer> <C-t> <Plug>(TsuquyomiGoBack)
+" Use tern_for_vim.
+let g:tern#command = ["tern"]
+let g:tern#arguments = ["--persistent"]
