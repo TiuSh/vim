@@ -23,6 +23,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'svermeulen/vim-easyclip'
 Plug 'kassio/neoterm'
 Plug 'neovim/python-client'
+Plug 'terryma/vim-multiple-cursors'
 
 " VCS (Git/SVN/...)
 Plug 'tpope/vim-fugitive'
@@ -33,7 +34,6 @@ Plug 'neomake/neomake'
 Plug 'tpope/vim-commentary'
 Plug 'jiangmiao/auto-pairs'
 Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
 Plug 'junegunn/vim-easy-align'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'SirVer/ultisnips'
@@ -69,9 +69,13 @@ Plug 'justinj/vim-react-snippets'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'mhartington/deoplete-typescript'
 Plug 'mhartington/vim-angular2-snippets'
+Plug 'ianks/vim-tsx'
+
+" Flow
+Plug 'steelsojka/deoplete-flow'
 
 " PHP
-Plug 'shawncplus/phpcomplete.vim'
+Plug 'phpvim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' }
 
 " Meteor
 Plug 'cmather/vim-meteor-snippets'
@@ -272,6 +276,7 @@ set listchars=""          " reset listchars
 set listchars=tab:‣\      " display tabs with a sign
 set listchars+=nbsp:·     " display whitespaces with a dot
 set listchars+=trail:·    " display trailing whitespaces with a dot
+" set listchars+=eol:↵      " display EOL character
 set listchars+=extends:»  " right wrap
 set listchars+=precedes:« " left wrap
 
@@ -396,6 +401,9 @@ endif
 " Consider .scss files as CSS
 autocmd BufNewFile,BufRead *.scss set ft=scss.css
 
+" YAML files
+autocmd BufNewFile,BufRead *.yaml,*.yml setlocal filetype=yaml
+
 " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
@@ -441,7 +449,8 @@ map <leader>cc :cclose<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Omicomplete
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set omnifunc=csscomplete#CompleteCSS
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType php setlocal omnifunc=phpcd#CompletePHP
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -504,13 +513,16 @@ function! VisualSelection(direction) range
     let @" = l:saved_reg
 endfunction
 
-
 " Returns true if paste mode is enabled
 function! HasPaste()
     if &paste
         return 'PASTE MODE  '
     en
     return ''
+endfunction
+
+function! StrTrim(txt)
+  return substitute(a:txt, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
 endfunction
 
 
@@ -594,7 +606,13 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn|meteor)$',
   \ 'file': '\v\.(exe|so|dll)$',
   \ 'link': 'some_bad_symbolic_links',
-  \ }
+\ }
+let g:ctrlp_buftag_types = {
+  \ 'yaml': {
+  \   'bin': 'ctags',
+  \   'args': '-f - --sort=no --excmd=pattern --fields=nKs ',
+  \ },
+\ }
 
 map <C-b> :CtrlPBuffer<cr>
 map <C-t> :CtrlPBufTag<cr>
@@ -682,8 +700,10 @@ nnoremap <silent> <leader>ttc :call neoterm#kill()<cr>
 " => Neomake
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enabled makers
-let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
+let g:neomake_jsx_enabled_makers = ['eslint', 'flow']
 let g:neomake_typescript_enabled_makers = ['tsc']
+let g:neomake_tsx_enabled_makers = ['tsc']
 
 " Typescript compiler
 function! neomake#makers#ft#typescript#tsc()
@@ -695,7 +715,19 @@ function! neomake#makers#ft#typescript#tsc()
     \   '%E%f %#(%l\,%c): %m,' .
     \   '%Eerror %m,' .
     \   '%C%\s%\+%m'
-  \ }
+    \ }
+endfunction
+
+function! neomake#makers#ft#tsx#tsc()
+  return {
+    \ 'args': ['--project', getcwd(), '--noEmit'],
+    \ 'append_file': 0,
+    \ 'errorformat':
+    \   '%E%f %#(%l\,%c): error %m,' .
+    \   '%E%f %#(%l\,%c): %m,' .
+    \   '%Eerror %m,' .
+    \   '%C%\s%\+%m'
+    \ }
 endfunction
 
 " Error sign colors
@@ -704,30 +736,6 @@ let g:neomake_error_sign = {'text': '✖', 'texthl': 'NeomakeErrorMsg'}
 
 " Run Neomake on save
 autocmd! BufWritePost * Neomake
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Easytags
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set tags=./.tags;
-set cpoptions+=d
-
-let g:easytags_cmd = '/usr/local/Cellar/ctags/5.8_1/bin/ctags'
-let g:easytags_opts = ["--exclude=*.meteor/*"]
-" let g:easytags_autorecurse = 1
-let g:easytags_dynamic_files = 2
-let g:easytags_async = 1
-let g:easytags_auto_highlight = 0
-
-let g:easytags_languages = {
-\  'typescript': {
-\    'cmd': g:easytags_cmd,
-\    'args': [],
-\    'fileoutput_opt': '-f',
-\    'stdout_opt': '-f-',
-\    'recurse_flag': '-R'
-\  }
-\}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -753,17 +761,37 @@ let g:deoplete#max_menu_width = 0
 " File path relative to buffer
 let g:deoplete#file#enable_buffer_path = 1
 
-" Disable in comments/strings
-call deoplete#custom#set('_', 'disabled_syntaxes', ['Comment', 'String'])
+" Disable in comments
+call deoplete#custom#set('_', 'disabled_syntaxes', ['Comment'])
 
-" Navigate with tab
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+" Autocomplete with TAB
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ deoplete#mappings#manual_complete()
+
+function! s:check_back_space() abort "{{{
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
 
 " Autoclose preview window
 autocmd CompleteDone * pclose!
 
 " Debug
- " call deoplete#enable_logging('DEBUG', 'deoplete.log')
+" call deoplete#enable_logging('ERROR', 'deoplete.log')
+
+" Languages specifics
+let g:deoplete#omni#input_patterns = {}
+let g:deoplete#omni#input_patterns.php = '\w+|[^. \t]->\w*|\w+::\w*'
+
+" Use local Flow bin when provided
+let g:flow_path = StrTrim(system('PATH=$(npm bin):$PATH && which flow'))
+
+if g:flow_path != 'flow not found'
+  let g:deoplete#sources#flow#flow_bin = g:flow_path
+endif
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UltiSnips
@@ -802,6 +830,16 @@ let g:user_emmet_leader_key = '<C-z>'
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim Javascript
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" JSDoc syntax highlighting
+let g:javascript_plugin_jsdoc = 1
+
+" Flow syntax highlighting
+let g:javascript_plugin_flow = 1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Ternjs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <leader>td :TernDef<cr>
@@ -820,3 +858,9 @@ let g:tern_request_timeout = 1
 " Use tern_for_vim.
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim JSX
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:jsx_ext_required = 0
