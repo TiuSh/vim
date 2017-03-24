@@ -21,7 +21,7 @@ Plug 'arecarn/crunch.vim'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'easymotion/vim-easymotion'
 Plug 'svermeulen/vim-easyclip'
-Plug 'kassio/neoterm'
+" Plug 'vimlab/split-term.vim'
 Plug 'neovim/python-client'
 Plug 'terryma/vim-multiple-cursors'
 
@@ -45,12 +45,18 @@ Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-entire'
 Plug 'TiuSh/vim-toggline'
 
+" Debuggers
+Plug 'joonty/vdebug'
+
 " Markdown
 Plug 'gabrielelana/vim-markdown'
 Plug 'shime/vim-livedown'
 
 " HTML
 Plug 'mattn/emmet-vim'
+
+" Twig
+Plug 'lumiliet/vim-twig'
 
 " CSS
 Plug 'hail2u/vim-css3-syntax'
@@ -65,17 +71,18 @@ Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'mxw/vim-jsx'
 Plug 'justinj/vim-react-snippets'
 
+" CoffeeScript
+Plug 'kchmck/vim-coffee-script'
+
 " Typescript
-Plug 'HerringtonDarkholme/yats.vim'
+" Plug 'HerringtonDarkholme/yats.vim'
+Plug 'leafgarland/typescript-vim'
 Plug 'mhartington/deoplete-typescript'
 Plug 'mhartington/vim-angular2-snippets'
 Plug 'ianks/vim-tsx'
 
-" Flow
-Plug 'steelsojka/deoplete-flow'
-
 " PHP
-Plug 'phpvim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' }
+" Plug 'phpvim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' }
 
 " Meteor
 Plug 'cmather/vim-meteor-snippets'
@@ -87,6 +94,14 @@ Plug 'jparise/vim-graphql'
 Plug 'neovimhaskell/haskell-vim'
 Plug 'eagletmt/ghcmod-vim'
 Plug 'eagletmt/neco-ghc'
+
+" Python
+Plug 'zchee/deoplete-jedi'
+Plug 'hynek/vim-python-pep8-indent'
+
+" Ruby / Rails
+Plug 'osyo-manga/vim-monster', { 'do': 'gem install rcodetools' }
+Plug 'tpope/vim-rails'
 
 call plug#end()
 
@@ -115,6 +130,9 @@ nmap <silent> <leader>v :tabedit $MYVIMRC<cr>
 
 " Use the system clipboard by default
 set clipboard=unnamed
+
+" Allow per-project configuration file (.vimrc / .nvimrc)
+set exrc
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -163,10 +181,8 @@ set hid
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
-" Ignore case when searching
-set ignorecase
-
 " When searching try to be smart about cases
+set ignorecase
 set smartcase
 
 " Highlight search results
@@ -202,13 +218,23 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" vim-javascript plugin fix (only if VIM version is under 7.4 patch 1-7)
+" set regexpengine=1
+
+" Set utf8 as standard encoding
+set encoding=utf8
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+" Opens splits on right and below
+set splitright
+set splitbelow
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" vim-javascript plugin fix (only if VIM version is under 7.4 patch 1-7)
-set regexpengine=1
-
 " Enable syntax highlighting
 syntax enable
 
@@ -233,12 +259,6 @@ if has("gui_running")
     set t_Co=256
     set guitablabel=%M\ %t
 endif
-
-" Set utf8 as standard encoding and en_US as the standard language
-set encoding=utf8
-
-" Use Unix as the standard file type
-set ffs=unix,dos,mac
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -283,6 +303,9 @@ set listchars+=precedes:« " left wrap
 " Remove trailing spaces on save
 autocmd BufWritePre * :%s/\s\+$//e
 
+" PHP indentation
+autocmd FileType php,*.twig setlocal shiftwidth=4 tabstop=4
+
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -313,19 +336,13 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" Move between windows when in terminal mode
-if has('nvim')
-  tnoremap <C-j> <C-\><C-n><C-w>j
-  tnoremap <C-k> <C-\><C-n><C-w>k
-  tnoremap <C-h> <C-\><C-n><C-w>h
-  tnoremap <C-l> <C-\><C-n><C-w>l
-endif
+" Open split windows
+map <C-s> :split<cr>
+map <C-s>v :vsplit<cr>
 
-" Location list mapping
-map <leader>lo :lopen<cr>
-map <leader>lc :lclose<cr>
-map <leader>ln :lnext<cr>
-map <leader>lp :lprevious<cr>
+" With terminal
+map <C-s>t :split\|terminal<cr>
+map <C-s>vt :vsplit\|terminal<cr>
 
 " Close window
 map <leader>q :close<cr>
@@ -341,6 +358,9 @@ map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
+
+" With terminal
+map <leader>tnt :tabnew\|terminal<cr>
 
 map <A-h> gT
 map <A-l> gt
@@ -393,17 +413,6 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 " Remap <Esc> in insert mode to "jk"
 inoremap jk <Esc>
 
-" Remap also in terminal mode
-if has('nvim')
-  tnoremap jk <C-\><C-n>
-endif
-
-" Consider .scss files as CSS
-autocmd BufNewFile,BufRead *.scss set ft=scss.css
-
-" YAML files
-autocmd BufNewFile,BufRead *.yaml,*.yml setlocal filetype=yaml
-
 " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
@@ -417,6 +426,54 @@ if has("mac") || has("macunix")
   vmap <D-k> <M-k>
 endif
 
+" Location list mapping
+map <leader>lo :lopen<cr>
+map <leader>lc :lclose<cr>
+map <leader>ln :lnext<cr>
+map <leader>lp :lprevious<cr>
+
+" Open / Close Quickfix window
+map <leader>co :copen<cr>
+map <leader>cc :cclose<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Terminal mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has('nvim')
+  " Remap also in terminal mode
+  tnoremap jk <C-\><C-n>
+
+  " Move between windows when in terminal mode
+  tnoremap <C-j> <C-\><C-n><C-w>j
+  tnoremap <C-k> <C-\><C-n><C-w>k
+  tnoremap <C-h> <C-\><C-n><C-w>h
+  tnoremap <C-l> <C-\><C-n><C-w>l
+
+  " Terminal ctrl commands
+  tnoremap <leader>l <C-l>
+  tnoremap <leader>c <C-c>
+
+  " Automatically start insert mode when entering terminal window
+  autocmd BufWinEnter,WinEnter term://* startinsert
+endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Filetypes
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Consider .scss files as CSS
+autocmd BufNewFile,BufRead *.scss setlocal filetype=scss.css
+
+" Tsx files
+autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
+
+" YAML files
+autocmd BufNewFile,BufRead *.yaml,*.yml setlocal filetype=yaml
+
+" Vagrantfile
+autocmd BufNewFile,BufRead Vagrantfile setlocal filetype=ruby
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => The Silver Searcher
@@ -426,31 +483,28 @@ if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor --nogroup --hidden -g ""'
+  let g:ctrlp_user_command = 'ag %s -l --nocolor --nogroup --hidden --ignore ".git/" -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
   let g:ctrlp_use_caching = 0
+
+  " Define :Ag command
+  command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+
+  " Open search command
+  nnoremap <leader>g :Ag<SPACE>
+
+  " Find TODOs comments
+  noremap <leader>td :Ag TODO<cr>
 endif
-
-" grep word under cursor
-" nnoremap <silent> gv :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
-
-" Define :Ag command
-command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
-
-" Open search command
-nnoremap <leader>g :Ag<SPACE>
-
-" Open / Close Quickfix window
-map <leader>co :copen<cr>
-map <leader>cc :cclose<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Omicomplete
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType php setlocal omnifunc=phpcd#CompletePHP
+" autocmd FileType php setlocal omnifunc=phpcd#CompletePHP
+" autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -458,6 +512,9 @@ autocmd FileType php setlocal omnifunc=phpcd#CompletePHP
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace')<cr>
+
+" grep word under cursor
+" nnoremap <silent> gv :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -608,9 +665,13 @@ let g:ctrlp_custom_ignore = {
   \ 'link': 'some_bad_symbolic_links',
 \ }
 let g:ctrlp_buftag_types = {
-  \ 'yaml': {
+  \ 'yaml': '-f - --sort=no --excmd=pattern --fields=nKs --extras= ',
+  \ 'css': '-f - --sort=no --excmd=pattern --fields=nKs --extras= ',
+  \ 'typescript': '-f - --sort=no --excmd=pattern --fields=nKs --extras= ',
+  \ 'coffee': '-f - --sort=no --excmd=pattern --fields=nKs --extras= ',
+  \ 'javascript': {
   \   'bin': 'ctags',
-  \   'args': '-f - --sort=no --excmd=pattern --fields=nKs ',
+  \   'args': '-f - --sort=no --excmd=pattern --fields=nKs --extras= ',
   \ },
 \ }
 
@@ -680,30 +741,13 @@ let g:EasyClipUseSubstituteDefaults = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => NeoTerm
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Execute a command in terminal
-nnoremap <leader>tt :T<space>
-" open terminal
-nnoremap <silent> <leader>tto :Topen<cr>
-" new terminal
-nnoremap <silent> <leader>ttn :Tnew<cr>
-" hide/close terminal
-nnoremap <silent> <leader>tth :call neoterm#close()<cr>
-" clear terminal
-nnoremap <silent> <leader>ttl :call neoterm#clear()<cr>
-" kills the current job (send a <c-c>)
-nnoremap <silent> <leader>ttc :call neoterm#kill()<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neomake
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enabled makers
-let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
-let g:neomake_jsx_enabled_makers = ['eslint', 'flow']
-let g:neomake_typescript_enabled_makers = ['tsc']
-let g:neomake_tsx_enabled_makers = ['tsc']
+let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_jsx_enabled_makers = ['eslint']
+let g:neomake_typescript_enabled_makers = ['tsc', 'tslint']
+let g:neomake_tsx_enabled_makers = ['tsc', 'tslint']
 
 " Typescript compiler
 function! neomake#makers#ft#typescript#tsc()
@@ -779,11 +823,20 @@ endfunction"}}}
 autocmd CompleteDone * pclose!
 
 " Debug
-" call deoplete#enable_logging('ERROR', 'deoplete.log')
+" let g:deoplete#enable_at_startup = 1
+" let g:deoplete#enable_ignore_case = 1
+" let g:deoplete#auto_complete_start_length = 0
+" let g:auto_complete_start_length = 0
+" let g:deoplete#enable_refresh_always = 1
+" let g:deoplete#enable_debug = 1
+" let g:deoplete#enable_profile = 1
+" call deoplete#enable_logging('DEBUG', 'deoplete.log')
 
 " Languages specifics
-let g:deoplete#omni#input_patterns = {}
-let g:deoplete#omni#input_patterns.php = '\w+|[^. \t]->\w*|\w+::\w*'
+" let g:deoplete#omni#input_patterns = {}
+" let g:deoplete#omni#input_patterns.php = '\w+|[^. \t]->\w*|\w+::\w*'
+
+let g:deoplete#sources#tss#enable_auto_signature_preview = 1
 
 " Use local Flow bin when provided
 let g:flow_path = StrTrim(system('PATH=$(npm bin):$PATH && which flow'))
@@ -792,6 +845,9 @@ if g:flow_path != 'flow not found'
   let g:deoplete#sources#flow#flow_bin = g:flow_path
 endif
 
+let g:deoplete#sources#omni#input_patterns = {
+\   "ruby" : '[^. *\t]\.\w*\|\h\w*::',
+\}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => UltiSnips
@@ -842,9 +898,9 @@ let g:javascript_plugin_flow = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Ternjs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>td :TernDef<cr>
-map <leader>to :TernDoc<cr>
-map <leader>tr :TernRefs<cr>
+" map <leader>td :TernDef<cr>
+" map <leader>to :TernDoc<cr>
+" map <leader>tr :TernRefs<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -864,3 +920,16 @@ let g:tern#arguments = ["--persistent"]
 " => Vim JSX
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:jsx_ext_required = 0
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Ruby Monster
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" let g:monster#completion#rcodetools#backend = "async_rct_complete"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Security
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Prevent autocmd, shell and write commands from being run inside project-specific files
+set secure
