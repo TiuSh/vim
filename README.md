@@ -1,12 +1,14 @@
 ## OS X
 
+* Install [iTerm 2](https://www.iterm2.com/)
+
 * Install Hombrew:
 
 `$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 
-* Install Vim / CMake / Exuberant CTags / The Silver Searcher:
+* Install Neovim / CMake / Exuberant CTags / The Silver Searcher:
 
-`$ brew install vim cmake ctags the_silver_searcher`
+`$ brew install neovim/neovim/neovim cmake ctags the_silver_searcher`
 
 * Install [Node.js](https://nodejs.org/)
 
@@ -37,9 +39,9 @@ $ ln -s ~/.tiush-vim/.ctags ~/.ctags
 
 ## Linux (Ubuntu / Debian)
 
-* Install Git / Python / CMake / Node.js / Vim / Exuberant CTags / The Silver Searcher:
+* Install Git / Python / CMake / Node.js / Neovim / Exuberant CTags / The Silver Searcher:
 
-`$ sudo apt-get install git python-dev cmake nodejs vim ctags silversearcher-ag`
+`$ sudo apt-get install git python-dev cmake nodejs neovim ctags silversearcher-ag`
 
 * Set up ESLint:
 
