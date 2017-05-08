@@ -10,76 +10,103 @@ call plug#begin('~/.vim/plugged')
 
 " IDE
 Plug 'scrooloose/nerdtree'
-Plug 'vim-scripts/bufkill.vim'
+" Plug 'mhinz/vim-sayonara', { 'on': 'Sayonara' }
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-ctrlspace/vim-ctrlspace'
 Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'lokikl/vim-ctrlp-ag' TODO: Test
+" Plug 'fisadev/vim-ctrlp-cmdpalette' TODO: Test
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
+Plug 'junegunn/fzf.vim'
+" Plug 'haya14busa/vim-asterisk' TODO: Test
 Plug 'bkad/CamelCaseMotion'
 Plug 'tpope/vim-repeat'
-Plug 'altercation/vim-colors-solarized'
-Plug 'arecarn/crunch.vim'
+Plug 'frankier/neovim-colors-solarized-truecolor-only'
+" Plug 'arecarn/crunch.vim'
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'easymotion/vim-easymotion'
 Plug 'svermeulen/vim-easyclip'
 " Plug 'vimlab/split-term.vim'
 Plug 'neovim/python-client'
 Plug 'terryma/vim-multiple-cursors'
+" Plug 'editorconfig/editorconfig-vim' TODO: Test
+" Plug 'Shougo/context_filetype.vim' TODO: Test
+" Plug 'Konfekt/FastFold' TODO: Test
+" Plug 'Yggdroot/indentLine' TODO: Test
+" Plug 'ryanoasis/vim-devicons'
+" Plug 'itchyny/calendar.vim' TODO: Test
+" Plug 'ZSaberLv0/ZFVimIndentMove' TODO: Test
+Plug 'mhinz/vim-startify'
+" Plug 'airblade/vim-rooter'
 
 " VCS (Git/SVN/...)
 Plug 'tpope/vim-fugitive'
+" Plug 'lambdalisue/gina.vim' TODO: Test
+" Plug 'jreybert/vimagit' TODO: Test
 Plug 'airblade/vim-gitgutter'
+" Plug 'Xuyuanp/nerdtree-git-plugin' TODO: Test
+" Plug 'junegunn/gv.vim' TODO: Test
 
 " All languages
 Plug 'neomake/neomake'
-Plug 'tpope/vim-commentary'
+Plug 'scrooloose/nerdcommenter'
 Plug 'jiangmiao/auto-pairs'
-Plug 'xolox/vim-misc'
+" Plug 'itmammoth/doorboy.vim' TODO: Test
 Plug 'junegunn/vim-easy-align'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'Shougo/echodoc.vim' TODO: Test
+" Plug 'Shougo/neoinclude.vim' TODO: Test
+" Plug 'prabirshrestha/asyncomplete.vim' TODO: Test
 Plug 'SirVer/ultisnips'
+" Plug 'Shougo/neosnippet.vim' TODO: Test
+" Plug 'Shougo/neosnippet-snippets' TODO: Test
 Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-expand-region'
 Plug 'argtextobj.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-entire'
+Plug 'kana/vim-textobj-indent'
+" Plug 'gcmt/wildfire.vim' TODO: Test
 Plug 'TiuSh/vim-toggline'
+" Plug 'AndrewRadev/switch.vim' TODO: Test
 
 " Debuggers
 Plug 'joonty/vdebug'
 
 " Markdown
-Plug 'gabrielelana/vim-markdown'
-Plug 'shime/vim-livedown'
+Plug 'gabrielelana/vim-markdown', { 'for': 'markdown' }
+Plug 'shime/vim-livedown', { 'for': 'markdown' }
 
 " HTML
 Plug 'mattn/emmet-vim'
 
 " Twig
-Plug 'lumiliet/vim-twig'
+Plug 'lumiliet/vim-twig', { 'for': 'twig' }
 
 " CSS
-Plug 'hail2u/vim-css3-syntax'
-Plug 'cakebaker/scss-syntax.vim'
+Plug 'hail2u/vim-css3-syntax', { 'for': 'css' }
+Plug 'cakebaker/scss-syntax.vim', { 'for': 'css' }
 
 " Javascript
 Plug 'jaawerth/neomake-local-eslint-first'
-Plug 'pangloss/vim-javascript'
+Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'helino/vim-json'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install -g tern && npm install' }
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-Plug 'mxw/vim-jsx'
+Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'justinj/vim-react-snippets'
 
 " CoffeeScript
-Plug 'kchmck/vim-coffee-script'
+Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 
 " Typescript
 " Plug 'HerringtonDarkholme/yats.vim'
-Plug 'leafgarland/typescript-vim'
-Plug 'mhartington/deoplete-typescript'
+Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+Plug 'mhartington/deoplete-typescript', { 'for': 'typescript' }
 Plug 'mhartington/vim-angular2-snippets'
-Plug 'ianks/vim-tsx'
+Plug 'ianks/vim-tsx', { 'for': 'typescript' }
 
 " PHP
 " Plug 'phpvim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' }
@@ -91,17 +118,43 @@ Plug 'cmather/vim-meteor-snippets'
 Plug 'jparise/vim-graphql'
 
 " Haskell
-Plug 'neovimhaskell/haskell-vim'
-Plug 'eagletmt/ghcmod-vim'
-Plug 'eagletmt/neco-ghc'
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
+Plug 'eagletmt/ghcmod-vim', { 'for': 'haskell' }
+Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
 
 " Python
-Plug 'zchee/deoplete-jedi'
-Plug 'hynek/vim-python-pep8-indent'
+Plug 'zchee/deoplete-jedi', { 'for': 'python' }
+Plug 'hynek/vim-python-pep8-indent', { 'for': 'python' }
 
 " Ruby / Rails
-Plug 'osyo-manga/vim-monster', { 'do': 'gem install rcodetools' }
-Plug 'tpope/vim-rails'
+Plug 'osyo-manga/vim-monster', { 'do': 'gem install rcodetools', 'for': 'ruby' }
+Plug 'iurifq/ctrlp-rails.vim', { 'on': [
+      \ 'CtrlPModels',
+      \ 'CtrlPControllers',
+      \ 'CtrlPViews',
+      \ 'CtrlPLibs',
+      \ 'CtrlPSpecs',
+      \ 'CtrlPMigrations'
+      \ ] }
+Plug 'tpope/vim-rails', { 'on': [
+      \ 'Rake',
+      \ 'Rails',
+      \ 'A',
+      \ 'R',
+      \ 'Emodel',
+      \ 'Eview',
+      \ 'Econtroller',
+      \ 'Smodel',
+      \ 'Sview',
+      \ 'Scontroller',
+      \ 'Vmodel',
+      \ 'Vview',
+      \ 'Vcontroller',
+      \ 'Tmodel',
+      \ 'Tview',
+      \ 'Tcontroller',
+      \ 'Rexctract'
+      \ ] }
 
 call plug#end()
 
@@ -128,11 +181,17 @@ nmap <silent> <leader>w :w!<cr>
 " Open .vimrc file
 nmap <silent> <leader>v :tabedit $MYVIMRC<cr>
 
+" Reload file in current buffer
+nmap <silent> <leader>e :e!<cr>
+
 " Use the system clipboard by default
 set clipboard=unnamed
 
 " Allow per-project configuration file (.vimrc / .nvimrc)
 set exrc
+
+" Remove ex-mode mapping
+nnoremap Q <nop>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -174,8 +233,8 @@ set noshowmode
 " Command line height
 set cmdheight=1
 
-" A buffer becomes hidden when it is abandoned
-set hid
+" Hide unused buffers
+set hidden
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
@@ -246,11 +305,12 @@ let g:solarized_contrast = "high"
 " let g:solarized_termcolors = 256
 
 " Color Scheme
+set termguicolors
 set background=dark
 colorscheme solarized
 
 " Maximum line length
-set colorcolumn=100
+set colorcolumn=80
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -259,6 +319,10 @@ if has("gui_running")
     set t_Co=256
     set guitablabel=%M\ %t
 endif
+
+" Cursor styling
+let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 1
+set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -294,7 +358,7 @@ set nowrap "No wrap lines
 set list
 set listchars=""          " reset listchars
 set listchars=tab:‣\      " display tabs with a sign
-set listchars+=nbsp:·     " display whitespaces with a dot
+" set listchars+=nbsp:·     " display whitespaces with a dot
 set listchars+=trail:·    " display trailing whitespaces with a dot
 " set listchars+=eol:↵      " display EOL character
 set listchars+=extends:»  " right wrap
@@ -323,9 +387,8 @@ vnoremap <silent> # :call VisualSelection('b')<cr>
 map j gj
 map k gk
 
-" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+" Map <Space> to / (search)
 map <space> /
-map <c-space> ?
 
 " Disable highlight when <leader><space> is pressed
 map <silent> <leader><space> :noh<cr>
@@ -348,7 +411,7 @@ map <C-s>vt :vsplit\|terminal<cr>
 map <leader>q :close<cr>
 
 " Close the current buffer
-map <leader>bc :BD<cr>
+" map <leader>bc :BD<cr>
 
 " Close all the buffers
 map <leader>ba :%bdelete<cr>
@@ -427,14 +490,14 @@ if has("mac") || has("macunix")
 endif
 
 " Location list mapping
-map <leader>lo :lopen<cr>
+map <leader>ll :lopen<cr>
 map <leader>lc :lclose<cr>
 map <leader>ln :lnext<cr>
 map <leader>lp :lprevious<cr>
 
 " Open / Close Quickfix window
-map <leader>co :copen<cr>
-map <leader>cc :cclose<cr>
+map <leader>qq :copen<cr>
+map <leader>qc :cclose<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -482,20 +545,14 @@ if executable('ag')
   " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
 
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor --nogroup --hidden --ignore ".git/" -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-
-  " Define :Ag command
-  command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+  " Define :AgCmd command
+  command -nargs=+ -complete=file -bar AgCmd silent! grep! <args>|cwindow|redraw!
 
   " Open search command
-  nnoremap <leader>g :Ag<SPACE>
+  nnoremap <leader>g :AgCmd<SPACE>
 
   " Find TODOs comments
-  noremap <leader>td :Ag TODO<cr>
+  noremap <leader>td :AgCmd TODO<cr>
 endif
 
 
@@ -648,10 +705,46 @@ endfunction
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Sayonara
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" map <silent> <leader>bcc :Sayonara<cr>
+
+" Show confirm before quit
+" let g:sayonara_confirm_quit = 1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Airline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
+let g:airline_exclude_preview = 1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => CtrlSpace
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Default mapping fix with NeoVim
+let g:CtrlSpaceDefaultMappingKey = "<C-space> "
+
+" Disable tab line
+" set showtabline=0
+
+" Use Ag when available
+if executable("ag")
+  let g:CtrlSpaceGlobCommand = 'ag -l --nocolor -g ""'
+endif
+
+" Custom colors
+hi link CtrlSpaceNormal   Normal
+hi link CtrlSpaceSelected CursorLine
+hi link CtrlSpaceSearch   Search
+hi link CtrlSpaceStatus   StatusLine
+
+" Custom mappings
+
+" Close current buffer (/!\ Doesn't work with terminal buffer)
+map <silent> <leader>bc <C-space>fF<Esc>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -659,6 +752,7 @@ let g:airline_powerline_fonts = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ctrlp_open_new_file = 'r'
 let g:ctrlp_show_hidden = 1
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn|meteor)$',
   \ 'file': '\v\.(exe|so|dll)$',
@@ -675,8 +769,34 @@ let g:ctrlp_buftag_types = {
   \ },
 \ }
 
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor --nogroup --hidden --ignore ".git/" -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
+
 map <C-b> :CtrlPBuffer<cr>
 map <C-t> :CtrlPBufTag<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => FZF
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent> <leader>f :BLines<cr>
+nnoremap <silent> <leader>F :Ag<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Incsearch
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" map /  <Plug>(incsearch-fuzzy-/)
+" map ?  <Plug>(incsearch-fuzzy-?)
+" map g/ <Plug>(incsearch-fuzzy-stay)
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -739,6 +859,27 @@ let g:EasyClipShareYanks = 1
 " Substitute operator (mapped to 's')
 let g:EasyClipUseSubstituteDefaults = 1
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Startify
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:startify_list_order = [
+      \ ['    Sessions:'],
+      \ 'sessions',
+      \ ['    Most recently used files:'],
+      \ 'files'
+      \ ]
+
+" Only show the last 10th sessions
+let g:startify_session_number = 10
+
+" Automatically persists sessions when leavin Vim
+let g:startify_session_persistence = 1
+
+" Cwd to the root directory of the VCS
+let g:startify_change_to_vcs_root = 1
+
+" Use Unicode characters
+let g:startify_fortune_use_unicode = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neomake
@@ -780,6 +921,16 @@ let g:neomake_error_sign = {'text': '✖', 'texthl': 'NeomakeErrorMsg'}
 
 " Run Neomake on save
 autocmd! BufWritePost * Neomake
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NERD Commenter
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+inoremap <leader>cc <C-\><C-O>:call NERDComment('n', 'comment')<cr>
+inoremap <leader>c<space> <C-\><C-O>:call NERDComment('n', 'toggle')<cr>
+
+" Add / remove 1 space after comment delimiter
+let g:NERDSpaceDelims = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -862,8 +1013,8 @@ let g:UltiSnipsJumpForwardTrigger = "<leader>n"
 " Add comma or semicolon at the end of line or expresion
 nmap <silent> <leader>, :call toggline#End(',')<cr>
 nmap <silent> <leader>; :call toggline#End(';')<cr>
-imap <silent> <leader>, <Esc><Esc>:call toggline#End(',')<cr>a
-imap <silent> <leader>; <Esc><Esc>:call toggline#End(';')<cr>a
+inoremap <silent> <leader>, <C-\><C-O>:call toggline#End(',')<cr>
+inoremap <silent> <leader>; <C-\><C-O>:call toggline#End(';')<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -926,6 +1077,17 @@ let g:jsx_ext_required = 0
 " => Ruby Monster
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " let g:monster#completion#rcodetools#backend = "async_rct_complete"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => CtrlP Rails
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <silent> <C-g>c :CtrlPControllers<cr>
+nmap <silent> <C-g>v :CtrlPViews<cr>
+nmap <silent> <C-g>m :CtrlPModels<cr>
+nmap <silent> <C-g>l :CtrlPLibs<cr>
+nmap <silent> <C-g>s :CtrlPSpecs<cr>
+nmap <silent> <C-g>g :CtrlPMigrations<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
