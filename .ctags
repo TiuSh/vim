@@ -1,4 +1,4 @@
---languages=-javascript,CoffeeScript
+--languages=-javascript
 
 --langdef=js
 --langmap=js:.js

@@ -39,14 +39,17 @@ Plug 'terryma/vim-multiple-cursors'
 " Plug 'ZSaberLv0/ZFVimIndentMove' TODO: Test
 Plug 'mhinz/vim-startify'
 " Plug 'airblade/vim-rooter'
+Plug 'wakatime/vim-wakatime'
+Plug 'tpope/vim-unimpaired'
+" Plug 'tpope/vim-dispatch'
 
 " VCS (Git/SVN/...)
 Plug 'tpope/vim-fugitive'
 " Plug 'lambdalisue/gina.vim' TODO: Test
-" Plug 'jreybert/vimagit' TODO: Test
+Plug 'jreybert/vimagit'
 Plug 'airblade/vim-gitgutter'
 " Plug 'Xuyuanp/nerdtree-git-plugin' TODO: Test
-" Plug 'junegunn/gv.vim' TODO: Test
+Plug 'junegunn/gv.vim'
 
 " All languages
 Plug 'neomake/neomake'
@@ -68,6 +71,7 @@ Plug 'vim-scripts/argtextobj.vim'
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-entire'
 Plug 'kana/vim-textobj-indent'
+Plug 'glts/vim-textobj-comment'
 " Plug 'gcmt/wildfire.vim' TODO: Test
 Plug 'TiuSh/vim-toggline'
 " Plug 'AndrewRadev/switch.vim' TODO: Test
@@ -92,11 +96,12 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'css' }
 " Javascript
 Plug 'jaawerth/neomake-local-eslint-first'
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-Plug 'helino/vim-json'
+Plug 'elzr/vim-json'
 Plug 'ternjs/tern_for_vim', { 'do': 'npm install -g tern && npm install' }
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'justinj/vim-react-snippets'
+Plug 'jungomi/vim-mdnquery'
 
 " CoffeeScript
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
@@ -127,6 +132,7 @@ Plug 'zchee/deoplete-jedi', { 'for': 'python' }
 Plug 'hynek/vim-python-pep8-indent', { 'for': 'python' }
 
 " Ruby / Rails
+Plug 'tek/vim-textobj-ruby'
 Plug 'osyo-manga/vim-monster', { 'do': 'gem install rcodetools', 'for': 'ruby' }
 Plug 'iurifq/ctrlp-rails.vim', { 'on': [
       \ 'CtrlPModels',
@@ -388,7 +394,7 @@ map j gj
 map k gk
 
 " Map <Space> to / (search)
-map <space> /
+" map <space> /
 
 " Disable highlight when <leader><space> is pressed
 map <silent> <leader><space> :noh<cr>
@@ -490,15 +496,16 @@ if has("mac") || has("macunix")
 endif
 
 " Location list mapping
-map <leader>ll :lopen<cr>
-map <leader>lc :lclose<cr>
-map <leader>ln :lnext<cr>
-map <leader>lp :lprevious<cr>
+map gll :lopen<cr>
+map glc :lclose<cr>
+map gln :lnext<cr>
+map glp :lprevious<cr>
 
 " Open / Close Quickfix window
-map <leader>qq :copen<cr>
-map <leader>qc :cclose<cr>
-
+map gcc :copen<cr>
+map gcl :cclose<cr>
+map gcn :cnext<cr>
+map gcp :cprevious<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Terminal mappings
@@ -537,6 +544,9 @@ autocmd BufNewFile,BufRead *.yaml,*.yml setlocal filetype=yaml
 " Vagrantfile
 autocmd BufNewFile,BufRead Vagrantfile setlocal filetype=ruby
 
+" Axlsx-Rails view files
+autocmd BufNewFile,BufRead *.axlsx setlocal filetype=ruby
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => The Silver Searcher
@@ -546,10 +556,10 @@ if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
 
   " Define :AgCmd command
-  command -nargs=+ -complete=file -bar AgCmd silent! grep! <args>|cwindow|redraw!
+  " command -nargs=+ -complete=file -bar AgCmd silent! grep! <args>|cwindow|redraw!
 
   " Open search command
-  nnoremap <leader>g :AgCmd<SPACE>
+  " nnoremap <leader>g :AgCmd<SPACE>
 
   " Find TODOs comments
   noremap <leader>td :AgCmd TODO<cr>
@@ -716,7 +726,6 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Airline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_exclude_preview = 1
 
@@ -728,7 +737,7 @@ let g:airline_exclude_preview = 1
 let g:CtrlSpaceDefaultMappingKey = "<C-space> "
 
 " Disable tab line
-" set showtabline=0
+set showtabline=0
 
 " Use Ag when available
 if executable("ag")
@@ -787,9 +796,22 @@ map <C-t> :CtrlPBufTag<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => FZF
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <silent> <leader>f :BLines<cr>
-nnoremap <silent> <leader>F :Ag<cr>
+" nnoremap <silent> <C-f> :BLines<cr>
+nnoremap <Space> :BLines<cr>
+nnoremap <C-f> :Ag<Space>
+nmap  <C-m> <plug>(fzf-maps-n)
 
+function! s:gcheckout_sink(line)
+  execute 'Git checkout' a:line
+endfunction
+
+command! -bang -nargs=* Gcheckout
+      \ call fzf#run(fzf#wrap('Gcheckout', {
+      \     'source': 'git branch',
+      \     'sink': function('s:gcheckout_sink'),
+      \     'options': ['--ansi', '--prompt', 'Select Branch> ',
+      \                 '--color', 'hl:68,hl+:110']
+      \ }), <bang>0)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Incsearch
@@ -882,6 +904,39 @@ let g:startify_change_to_vcs_root = 1
 let g:startify_fortune_use_unicode = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fugitive
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Custom mappings
+nnoremap <leader>ga :Git add %:p<CR><CR>
+" nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gs :Magit<CR>
+nnoremap <leader>gc :Gcommit -v -q<CR>
+nnoremap <leader>gcs :Commits<CR>
+nnoremap <leader>gt :Gcommit -v -q %:p<CR>
+nnoremap <leader>gd :Gdiff<CR>
+nnoremap <leader>ge :Gedit<CR>
+nnoremap <leader>gr :Gread<CR>
+nnoremap <leader>gw :Gwrite<CR><CR>
+" nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <leader>gp :Ggrep<Space>
+nnoremap <leader>gm :Gmove<Space>
+nnoremap <leader>gb :Git branch<Space>
+" nnoremap <leader>go :Git checkout<Space>
+nnoremap <leader>go :Gcheckout<CR>
+nnoremap <leader>gob :Git checkout -b<Space>
+nnoremap <leader>gps :Gpush<CR>
+nnoremap <leader>gpsf :Gpush -f<CR>
+nnoremap <leader>gpl :Gpull origin $(git rev-parse --abbrev-ref HEAD)<CR>
+nnoremap <leader>grb :Git rebase origin<Space>
+nnoremap <leader>gf :Gfetch<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => GV
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Custom mappings
+nnoremap <leader>gl :GV<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neomake
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enabled makers
@@ -916,8 +971,7 @@ function! neomake#makers#ft#tsx#tsc()
 endfunction
 
 " Error sign colors
-hi NeomakeErrorMsg ctermfg=160 ctermbg=black
-let g:neomake_error_sign = {'text': '✖', 'texthl': 'NeomakeErrorMsg'}
+let g:neomake_error_sign = {'text': '✖', 'texthl': 'DiffDelete'}
 
 " Run Neomake on save
 autocmd! BufWritePost * Neomake
@@ -927,7 +981,9 @@ autocmd! BufWritePost * Neomake
 " => NERD Commenter
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 inoremap <leader>cc <C-\><C-O>:call NERDComment('n', 'comment')<cr>
+inoremap <leader>cu <C-\><C-O>:call NERDComment('n', 'uncomment')<cr>
 inoremap <leader>c<space> <C-\><C-O>:call NERDComment('n', 'toggle')<cr>
+" imap <leader>cc <plug>NERDCommenterInsert
 
 " Add / remove 1 space after comment delimiter
 let g:NERDSpaceDelims = 1
@@ -1071,6 +1127,13 @@ let g:tern#arguments = ["--persistent"]
 " => Vim JSX
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:jsx_ext_required = 0
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Mdn Query
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType typescript setlocal keywordprg=:MdnQueryFirstMatch
+autocmd FileType typescript.tsx setlocal keywordprg=:MdnQueryFirstMatch
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
