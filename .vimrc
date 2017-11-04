@@ -39,7 +39,7 @@ Plug 'terryma/vim-multiple-cursors'
 " Plug 'ZSaberLv0/ZFVimIndentMove' TODO: Test
 Plug 'mhinz/vim-startify'
 " Plug 'airblade/vim-rooter'
-Plug 'wakatime/vim-wakatime'
+" Plug 'wakatime/vim-wakatime'
 Plug 'tpope/vim-unimpaired'
 " Plug 'tpope/vim-dispatch'
 
